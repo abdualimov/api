@@ -1,0 +1,33 @@
+#Импортирум необходимые библиотеки
+import requests 
+from pprint import pprint 
+
+#  Сама функция
+def get_smm_index(group_name, token):
+    url = 'https://api.vk.com/method/wall.get'
+    params = {  
+    'domain': group_name,  
+    'filter': 'owner',  
+    'count': 10,  
+    'offset': 0,  
+    'access_token': token,  
+    'v': 5.95  
+    }  
+    url1 = 'https://api.vk.com/method/groups.getMembers'  
+    params1 = {  
+    'group_id': group_name,  
+    'v': 5.95,  
+    'access_token': token  
+    }  
+    response = requests.get(url, params = params)
+    response1 = requests.get(url1, params = params1)
+    data = response1.json()['response']['count']
+    sum1 = 0
+    for record in response.json()['response']['items'][:]:  
+        sum1 += (record['comments']['count'] + record['likes']['count'] + record['reposts']['count'])
+    smm_index = sum1 / data
+    return smm_index
+    
+# Пример ввода
+token = '...'
+get_smm_index('habr', token)
